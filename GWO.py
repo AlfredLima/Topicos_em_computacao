@@ -65,28 +65,27 @@ def GWO(lower_bounds, upper_bounds, dim, wolf_population, max_iter):
             cpy = Positions[i, :].copy()
             first_layer = []
 
-            m = numpy.zeros((8, 12))
+            w = numpy.zeros((8, 12))
             for k in range(8):
-                for l in range(12):
-                    m[k][l] = cpy[12*k + l]
-            first_layer.append(m)
-            m = numpy.zeros(12)
-            first_layer.append(m)
+                for m in range(12):
+                    w[k][m] = cpy[12*k + m]
+            first_layer.append(w)
+            w = numpy.zeros(12)
+            first_layer.append(w)
 
             second_layer = []
-            m = numpy.zeros((12, 1))
+            w = numpy.zeros((12, 1))
             for k in range(12):
-                m[k] = cpy[8*12 + k]
-            second_layer.append(m)
-            m = numpy.zeros(1)
-            second_layer.append(m)
+                w[k] = cpy[8*12 + k]
+            second_layer.append(w)
+            w = numpy.zeros(1)
+            second_layer.append(w)
 
             model.layers[0].set_weights(first_layer)
             model.layers[1].set_weights(second_layer)
 
-            _, fitness = model.evaluate(inputs, output)
+            _, fitness = model.evaluate(inputs, output, verbose=0)
             fitness = fitness*100
-            # print("", )
 
             # Update Alpha, Beta, and Delta
             if fitness > Alpha_score:
@@ -143,9 +142,7 @@ def GWO(lower_bounds, upper_bounds, dim, wolf_population, max_iter):
 
     timerEnd = time.time()
     s.endTime = time.strftime("%Y-%m-%d-%H-%M-%S")
-    s.executionTime = timerEnd-timerStart
     s.convergence = Convergence_curve
     s.optimizer = "GWO"
-    s.obj_funcname = obj_func.__name__
 
     return s

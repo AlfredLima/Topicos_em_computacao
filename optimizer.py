@@ -20,4 +20,4 @@ def runDiabetes(PopulationSize, Iterations):
                         PopulationSize, Iterations)
 
 
-runDiabetes(12, 1)
+runDiabetes(12, 50)
