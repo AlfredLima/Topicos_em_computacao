@@ -8,8 +8,8 @@ import matplotlib.pyplot as plt
 import argparse
 import sys
 
-def runDiabetes(PopulationSize, Iterations, Dataset, Nodes):
-    dim = Nodes
+def runDiabetes(PopulationSize, Iterations, Dataset, Nodes, InputSize):
+    dim = InputSize
     lbs = -1
     ubs = 1
     evolution = gwo.GWO(lbs, ubs, dim,
@@ -28,6 +28,8 @@ def main():
                         help='Dataset path', default="pima-indians-diabetes.csv")
     parser.add_argument('-n', '--nodes', type=int,
                         help='Number of nodes in neural network', default=12)
+    parser.add_argument('-i', '--input_size', type=int,
+                        help='Input size', default=8)
     args = parser.parse_args(sys.argv[1:])
 
     print("**************************************")
@@ -37,7 +39,7 @@ def main():
     print(args.population)
     
     runDiabetes(PopulationSize=args.population,
-                Iterations=args.iterations, Dataset=args.dataset, Nodes=args.nodes)
+                Iterations=args.iterations, Dataset=args.dataset, Nodes=args.nodes, InputSize = args.input_size)
 
 
 if __name__ == "__main__":
