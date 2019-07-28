@@ -8,16 +8,18 @@ import matplotlib.pyplot as plt
 import argparse
 import sys
 
-def runDiabetes(PopulationSize, Iterations, Dataset):
+
+def runDiabetes(PopulationSize, Iterations, Dataset, Nodes):
     dim = 8
     lbs = -1
     ubs = 1
     evolution = gwo.GWO(lbs, ubs, dim,
-                        PopulationSize, Iterations, Dataset)
+                        PopulationSize, Iterations, Dataset, Nodes)
 
 
-def main() :
-    parser = argparse.ArgumentParser(description='GWO for optimizing neural networks')
+def main():
+    parser = argparse.ArgumentParser(
+        description='GWO for optimizing neural networks')
     parser.add_argument('-p', '--population', default=12, type=int,
                         help='Population size')
     parser.add_argument('-it', '--iterations', type=int,
@@ -25,6 +27,8 @@ def main() :
                         help='Number of iterations')
     parser.add_argument('-d', '--dataset', type=str,
                         help='Dataset path', default="pima-indians-diabetes.csv")
+    parser.add_argument('-n', '--nodes', type=int,
+                        help='Number of nodes in neural network', default=12)
     args = parser.parse_args(sys.argv[1:])
 
     print("**************************************")
@@ -32,9 +36,9 @@ def main() :
     print("**************************************")
 
     print(args.population)
-    
-    runDiabetes(PopulationSize=args.population, Iterations=args.iterations, Dataset=args.dataset)
 
+    runDiabetes(PopulationSize=args.population,
+                Iterations=args.iterations, Dataset=args.dataset, Nodes=args.nodes)
 
 
 if __name__ == "__main__":

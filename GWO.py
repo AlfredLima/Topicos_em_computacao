@@ -8,8 +8,10 @@ from numpy import loadtxt
 from keras.models import Sequential
 from keras.layers import Dense
 
+import matplotlib.pyplot as plt
 
-def GWO(lower_bounds, upper_bounds, dim, wolf_population, max_iter, dataset_path):
+
+def GWO(lower_bounds, upper_bounds, dim, wolf_population, max_iter, dataset_path, num_nodes):
     print("Run...")
     dataset = loadtxt(dataset_path, delimiter=',')
     # split into input (X) and output (y) variables
@@ -17,7 +19,7 @@ def GWO(lower_bounds, upper_bounds, dim, wolf_population, max_iter, dataset_path
     output = dataset[:, dim]
     # model
     model = Sequential()
-    model.add(Dense(12, input_dim=dim, activation='relu'))
+    model.add(Dense(num_nodes, input_dim=dim, activation='relu'))
     model.add(Dense(1, activation='sigmoid'))
     model.compile(loss='binary_crossentropy',
                   optimizer='adam', metrics=['accuracy'])
@@ -25,7 +27,7 @@ def GWO(lower_bounds, upper_bounds, dim, wolf_population, max_iter, dataset_path
     # Min or Max -> 0 is minimo and 1 is maximo
     # initialize alpha, beta, and delta_pos
 
-    dim_layers = 12 * 8 + 12 * 1
+    dim_layers = num_nodes * dim + num_nodes * 1
 
     Alpha_pos = numpy.zeros(dim_layers)
     Alpha_score = -float("inf")
@@ -65,18 +67,18 @@ def GWO(lower_bounds, upper_bounds, dim, wolf_population, max_iter, dataset_path
             cpy = Positions[i, :].copy()
             first_layer = []
 
-            w = numpy.zeros((8, 12))
-            for k in range(8):
-                for m in range(12):
-                    w[k][m] = cpy[12*k + m]
+            w = numpy.zeros((dim, num_nodes))
+            for k in range(dim):
+                for m in range(num_nodes):
+                    w[k][m] = cpy[num_nodes*k + m]
             first_layer.append(w)
-            w = numpy.zeros(12)
+            w = numpy.zeros(num_nodes)
             first_layer.append(w)
 
             second_layer = []
-            w = numpy.zeros((12, 1))
-            for k in range(12):
-                w[k] = cpy[8*12 + k]
+            w = numpy.zeros((num_nodes, 1))
+            for k in range(num_nodes):
+                w[k] = cpy[dim*num_nodes + k]
             second_layer.append(w)
             w = numpy.zeros(1)
             second_layer.append(w)
@@ -140,6 +142,10 @@ def GWO(lower_bounds, upper_bounds, dim, wolf_population, max_iter, dataset_path
         Convergence_curve[l] = Alpha_score
 
         print("Run", l+1, ": Accuracy is", Alpha_score, "%")
+
+    plt.plot(Convergence_curve, 'ro')
+    plt.axis([0, max_iter, 0, 100])
+    plt.show()
 
     timerEnd = time.time()
     s.endTime = time.strftime("%Y-%m-%d-%H-%M-%S")
