@@ -25,7 +25,7 @@ def GWO(lower_bounds, upper_bounds, dim, wolf_population, max_iter, dataset_path
     # Min or Max -> 0 is minimo and 1 is maximo
     # initialize alpha, beta, and delta_pos
 
-    dim_layers = 12 * 8 + 12 * 1
+    dim_layers = 12 * dim + 12 * 1
 
     Alpha_pos = numpy.zeros(dim_layers)
     Alpha_score = -float("inf")
@@ -65,8 +65,8 @@ def GWO(lower_bounds, upper_bounds, dim, wolf_population, max_iter, dataset_path
             cpy = Positions[i, :].copy()
             first_layer = []
 
-            w = numpy.zeros((8, 12))
-            for k in range(8):
+            w = numpy.zeros((dim, 12))
+            for k in range(dim):
                 for m in range(12):
                     w[k][m] = cpy[12*k + m]
             first_layer.append(w)
@@ -76,7 +76,7 @@ def GWO(lower_bounds, upper_bounds, dim, wolf_population, max_iter, dataset_path
             second_layer = []
             w = numpy.zeros((12, 1))
             for k in range(12):
-                w[k] = cpy[8*12 + k]
+                w[k] = cpy[dim*12 + k]
             second_layer.append(w)
             w = numpy.zeros(1)
             second_layer.append(w)
