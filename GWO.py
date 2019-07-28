@@ -137,8 +137,9 @@ def GWO(lower_bounds, upper_bounds, dim, wolf_population, max_iter, dataset_path
                 X3 = Delta_pos[j]-A3*D_delta  # Equation (3.5)-part 3
 
                 Positions[i, j] = (X1+X2+X3)/3  # Equation (3.7)
-        print('Iteração %d -> acurácia = %f' % (l+1, Alpha_score))
         Convergence_curve[l] = Alpha_score
+
+        print("Run", l+1, ": Accuracy is", Alpha_score, "%")
 
     timerEnd = time.time()
     s.endTime = time.strftime("%Y-%m-%d-%H-%M-%S")
