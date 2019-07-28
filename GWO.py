@@ -3,35 +3,46 @@ import numpy
 import math
 from solution import solution
 import time
-# import Plot
+
+from numpy import loadtxt
+from keras.models import Sequential
+from keras.layers import Dense
 
 
-def GWO(obj_func, lower_bounds, upper_bounds, dim, wolf_population, max_iter, min_or_max=0):
+def GWO(lower_bounds, upper_bounds, dim, wolf_population, max_iter):
+    dataset = loadtxt('pima-indians-diabetes.csv', delimiter=',')
+    # split into input (X) and output (y) variables
+    inputs = dataset[:, 0:dim]
+    output = dataset[:, dim]
+    # model
+    model = Sequential()
+    model.add(Dense(12, input_dim=dim, activation='relu'))
+    model.add(Dense(1, activation='sigmoid'))
+    model.compile(loss='binary_crossentropy',
+                  optimizer='adam', metrics=['accuracy'])
+
     # Min or Max -> 0 is minimo and 1 is maximo
     # initialize alpha, beta, and delta_pos
-    Alpha_pos = numpy.zeros(dim)
-    Alpha_score = float("inf")
-    if min_or_max:
-        Alpha_score = -Alpha_score
 
-    Beta_pos = numpy.zeros(dim)
-    Beta_score = float("inf")
-    if min_or_max:
-        Beta_score = -Beta_score
+    dim_layers = 21
 
-    Delta_pos = numpy.zeros(dim)
-    Delta_score = float("inf")
-    if min_or_max:
-        Delta_score = -Delta_score
+    Alpha_pos = numpy.zeros(dim_layers)
+    Alpha_score = -float("inf")
+
+    Beta_pos = numpy.zeros(dim_layers)
+    Beta_score = -float("inf")
+
+    Delta_pos = numpy.zeros(dim_layers)
+    Delta_score = -float("inf")
 
     if not isinstance(lower_bounds, list):
-        lower_bounds = [lower_bounds] * dim
+        lower_bounds = [lower_bounds] * dim_layers
     if not isinstance(upper_bounds, list):
-        upper_bounds = [upper_bounds] * dim
+        upper_bounds = [upper_bounds] * dim_layers
 
     # Initialize the positions of search agents
-    Positions = numpy.zeros((wolf_population, dim))
-    for i in range(dim):
+    Positions = numpy.zeros((wolf_population, dim_layers))
+    for i in range(dim_layers):
         Positions[:, i] = numpy.random.uniform(
             0, 1, wolf_population) * (upper_bounds[i] - lower_bounds[i]) + lower_bounds[i]
 
@@ -45,44 +56,34 @@ def GWO(obj_func, lower_bounds, upper_bounds, dim, wolf_population, max_iter, mi
         for i in range(0, wolf_population):
 
             # Return back the search agents that go beyond the boundaries of the search space
-            for j in range(dim):
+            for j in range(dim_layers):
                 Positions[i, j] = numpy.clip(
                     Positions[i, j], lower_bounds[j], upper_bounds[j])
 
             # Calculate objective function for each search agent
-            fitness = obj_func(Positions[i, :])
+            # model.layers[0].set_weigth(Positions[:])
+            # model.layers[1].set_weigth()
+
+            fitness = 0  # obj_func(Positions[i, :])
 
             # Update Alpha, Beta, and Delta
-            if min_or_max:
-                if fitness > Alpha_score:
-                    Alpha_score = fitness  # Update alpha
-                    Alpha_pos = Positions[i, :].copy()
+            if fitness > Alpha_score:
+                Alpha_score = fitness  # Update alpha
+                Alpha_pos = Positions[i, :].copy()
 
-                if (fitness < Alpha_score and fitness > Beta_score):
-                    Beta_score = fitness  # Update beta
-                    Beta_pos = Positions[i, :].copy()
+            if (fitness < Alpha_score and fitness > Beta_score):
+                Beta_score = fitness  # Update beta
+                Beta_pos = Positions[i, :].copy()
 
-                if (fitness < Alpha_score and fitness < Beta_score and fitness > Delta_score):
-                    Delta_score = fitness  # Update delta
-                    Delta_pos = Positions[i, :].copy()
-            else:
-                if fitness < Alpha_score:
-                    Alpha_score = fitness  # Update alpha
-                    Alpha_pos = Positions[i, :].copy()
-
-                if (fitness > Alpha_score and fitness < Beta_score):
-                    Beta_score = fitness  # Update beta
-                    Beta_pos = Positions[i, :].copy()
-
-                if (fitness > Alpha_score and fitness > Beta_score and fitness < Delta_score):
-                    Delta_score = fitness  # Update delta
-                    Delta_pos = Positions[i, :].copy()
+            if (fitness < Alpha_score and fitness < Beta_score and fitness > Delta_score):
+                Delta_score = fitness  # Update delta
+                Delta_pos = Positions[i, :].copy()
 
         a = 2-l*((2)/max_iter)  # a decreases linearly fron 2 to 0
 
         # Update the Position of search agents including omegas
         for i in range(0, wolf_population):
-            for j in range(0, dim):
+            for j in range(0, dim_layers):
 
                 r1 = random.random()  # r1 is a random number in [0,1]
                 r2 = random.random()  # r2 is a random number in [0,1]
