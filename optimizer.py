@@ -14,12 +14,10 @@ import matplotlib.pyplot as plt
 
 def runDiabetes(PopulationSize, Iterations):
     dim = 8
-    lbs = [-1]*dim
-    ubs = [1]*dim
-    # load the dataset
-
+    lbs = -1
+    ubs = 1
     evolution = gwo.GWO(lbs, ubs, dim,
-                        PopulationSize, Iterations, 0)
-# # evaluate the keras model
-# _, accuracy = model.evaluate(X, y)
-# print('Accuracy: %.2f' % (accuracy*100))
+                        PopulationSize, Iterations)
+
+
+runDiabetes(12, 1)

@@ -10,6 +10,7 @@ from keras.layers import Dense
 
 
 def GWO(lower_bounds, upper_bounds, dim, wolf_population, max_iter):
+    print("Run...")
     dataset = loadtxt('pima-indians-diabetes.csv', delimiter=',')
     # split into input (X) and output (y) variables
     inputs = dataset[:, 0:dim]
@@ -24,7 +25,7 @@ def GWO(lower_bounds, upper_bounds, dim, wolf_population, max_iter):
     # Min or Max -> 0 is minimo and 1 is maximo
     # initialize alpha, beta, and delta_pos
 
-    dim_layers = 21
+    dim_layers = 12 * 8 + 12 * 1
 
     Alpha_pos = numpy.zeros(dim_layers)
     Alpha_score = -float("inf")
@@ -61,10 +62,31 @@ def GWO(lower_bounds, upper_bounds, dim, wolf_population, max_iter):
                     Positions[i, j], lower_bounds[j], upper_bounds[j])
 
             # Calculate objective function for each search agent
-            # model.layers[0].set_weigth(Positions[:])
-            # model.layers[1].set_weigth()
+            cpy = Positions[i, :].copy()
+            first_layer = []
 
-            fitness = 0  # obj_func(Positions[i, :])
+            m = numpy.zeros((8, 12))
+            for k in range(8):
+                for l in range(12):
+                    m[k][l] = cpy[12*k + l]
+            first_layer.append(m)
+            m = numpy.zeros(12)
+            first_layer.append(m)
+
+            second_layer = []
+            m = numpy.zeros((12, 1))
+            for k in range(12):
+                m[k] = cpy[8*12 + k]
+            second_layer.append(m)
+            m = numpy.zeros(1)
+            second_layer.append(m)
+
+            model.layers[0].set_weights(first_layer)
+            model.layers[1].set_weights(second_layer)
+
+            _, fitness = model.evaluate(inputs, output)
+            fitness = fitness*100
+            # print("", )
 
             # Update Alpha, Beta, and Delta
             if fitness > Alpha_score:
@@ -116,7 +138,7 @@ def GWO(lower_bounds, upper_bounds, dim, wolf_population, max_iter):
                 X3 = Delta_pos[j]-A3*D_delta  # Equation (3.5)-part 3
 
                 Positions[i, j] = (X1+X2+X3)/3  # Equation (3.7)
-
+        print('$$$$', l, Alpha_score)
         Convergence_curve[l] = Alpha_score
 
     timerEnd = time.time()
