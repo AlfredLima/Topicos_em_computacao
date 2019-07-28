@@ -9,9 +9,9 @@ from keras.models import Sequential
 from keras.layers import Dense
 
 
-def GWO(lower_bounds, upper_bounds, dim, wolf_population, max_iter):
+def GWO(lower_bounds, upper_bounds, dim, wolf_population, max_iter, dataset_path):
     print("Run...")
-    dataset = loadtxt('pima-indians-diabetes.csv', delimiter=',')
+    dataset = loadtxt(dataset_path, delimiter=',')
     # split into input (X) and output (y) variables
     inputs = dataset[:, 0:dim]
     output = dataset[:, dim]
@@ -137,7 +137,7 @@ def GWO(lower_bounds, upper_bounds, dim, wolf_population, max_iter):
                 X3 = Delta_pos[j]-A3*D_delta  # Equation (3.5)-part 3
 
                 Positions[i, j] = (X1+X2+X3)/3  # Equation (3.7)
-        print('$$$$', l, Alpha_score)
+        print('Iteração %d -> acurácia = %f' % (l+1, Alpha_score))
         Convergence_curve[l] = Alpha_score
 
     timerEnd = time.time()
