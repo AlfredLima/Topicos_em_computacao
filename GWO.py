@@ -148,7 +148,7 @@ def GWO(lower_bounds, upper_bounds, dim, wolf_population, max_iter, dataset_path
                 Positions[i, j] = (X1+X2+X3)/3  # Equation (3.7)
         Convergence_curve[l] = Alpha_score
 
-        print("Run", l+1, ": Accuracy is", Alpha_score, "%")
+        print("Epoch", l+1, ": Accuracy is", Alpha_score, "%")
 
 
     # evaluate the keras model
@@ -158,7 +158,7 @@ def GWO(lower_bounds, upper_bounds, dim, wolf_population, max_iter, dataset_path
     plt.plot(Convergence_curve, 'r')
 
     plt.axis([0, max_iter, 0, 100])
-    plt.xlabel('Iterations')
+    plt.xlabel('Epochs')
     plt.ylabel('Accuracy (%)')
     plt.show()
 
