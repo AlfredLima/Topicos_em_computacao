@@ -21,16 +21,16 @@ model.add(Dense(1, activation='sigmoid'))
 # compile the keras model
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 # fit the keras model on the dataset
-history = model.fit(X, y, epochs=100, batch_size=10, verbose=0)
+history = model.fit(X_train, y_train, epochs=100, batch_size=10, verbose=0)
 # list all data in history
-print(history.history.keys())
+# print(history.history.keys())
 # summarize history for accuracy
 plt.plot(history.history['acc'])
 # plt.plot(history.history['val_acc'])
 plt.title('model accuracy')
 plt.ylabel('accuracy')
 plt.xlabel('epoch')
-plt.legend(['train', 'test'], loc='upper left')
+plt.legend(['train'], loc='upper left')
 plt.show()
 
 
