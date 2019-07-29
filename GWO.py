@@ -146,8 +146,10 @@ def GWO(lower_bounds, upper_bounds, dim, wolf_population, max_iter, dataset_path
 
         print("Run", l+1, ": Accuracy is", Alpha_score, "%")
 
-    plt.plot(Convergence_curve, 'ro')
+    plt.plot(Convergence_curve, 'r')
     plt.axis([0, max_iter, 0, 100])
+    plt.xlabel('Iterations')
+    plt.ylabel('Accuracy (%)')
     plt.show()
 
     timerEnd = time.time()

@@ -27,7 +27,7 @@ def main():
     parser.add_argument('-d', '--dataset', type=str,
                         help='Dataset path', default="pima-indians-diabetes.csv")
     parser.add_argument('-n', '--nodes', type=int,
-                        help='Number of nodes in neural network', default=12)
+                        help='Number of hidden nodes in neural network', default=12)
     parser.add_argument('-i', '--input_size', type=int,
                         help='Input size', default=8)
     args = parser.parse_args(sys.argv[1:])
