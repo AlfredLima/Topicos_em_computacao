@@ -8,6 +8,8 @@ from numpy import loadtxt
 from keras.models import Sequential
 from keras.layers import Dense
 
+from sklearn.model_selection import train_test_split
+
 import matplotlib.pyplot as plt
 
 
@@ -15,8 +17,10 @@ def GWO(lower_bounds, upper_bounds, dim, wolf_population, max_iter, dataset_path
     print("Run...")
     dataset = loadtxt(dataset_path, delimiter=',')
     # split into input (X) and output (y) variables
-    inputs = dataset[:, 0:dim]
-    output = dataset[:, dim]
+    X = dataset[:,0:dim]
+    y = dataset[:,dim]
+    inputs, X_test, output, y_test = train_test_split(X, y, test_size=0.2)
+
     # model
     model = Sequential()
     model.add(Dense(num_nodes, input_dim=dim, activation='relu'))
@@ -145,6 +149,11 @@ def GWO(lower_bounds, upper_bounds, dim, wolf_population, max_iter, dataset_path
         Convergence_curve[l] = Alpha_score
 
         print("Run", l+1, ": Accuracy is", Alpha_score, "%")
+
+
+    # evaluate the keras model
+    _, accuracy = model.evaluate(X_test, y_test)
+    print('Accuracy in test dataset: %.2f' % (accuracy*100))
 
     plt.plot(Convergence_curve, 'ro')
     plt.axis([0, max_iter, 0, 100])
