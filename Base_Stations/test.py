@@ -1,3 +1,4 @@
+from shapely.geometry import Polygon
 import pygame
 import sys
 from pygame.locals import *
@@ -8,8 +9,8 @@ def createPoints2Poly(side, center, radius):
     angle = 2*math.pi/side
     points = []
     for i in range(side):
-        x = center[0] + radius*math.cos((i+0.5)*angle)
-        y = center[1] + radius*math.sin((i+0.5)*angle)
+        x = center[0] + radius*math.cos((i)*angle)
+        y = center[1] + radius*math.sin((i)*angle)
         points.append((x, y))
 
     return tuple(points)
@@ -29,13 +30,26 @@ BLUE = (0, 0, 255)
 # inicia as fontes
 basicFont = pygame.font.SysFont(None, 48)
 # desenha o fundo branco
-windowSurface.fill(WHITE)
+windowSurface.fill(GREEN)
 # desenha um poligono verde na superficie
-# pygame.draw.polygon(windowSurface, GREEN, ((146, 0), (291, 106), (236, 277),
-#                                            (56, 277), (0, 106)))
 
-pygame.draw.polygon(windowSurface, GREEN,
-                    createPoints2Poly(6, (625/2, 625/2), 100))
+city = [(0, 0), (0, 625), (625, 625), (625, 0)]
+
+BSc = [(219, 287), (219, 393), (312, 234), (312, 234),
+       (312, 340), (312, 448), (405, 287), (405, 393)]
+
+Bs = []
+for B in BSc:
+    Bs.append(createPoints2Poly(4, B, 10))
+
+for B in Bs:
+    pygame.draw.polygon(windowSurface, (127, 127, 127),
+                        B)
+
+for i in range(len(BSc)):
+    Bs[i] = Polygon(Bs[i])
+
+print(Bs[0].intersection(Bs[1]).area)
 
 # desenha a janela na tela
 pygame.display.update()
