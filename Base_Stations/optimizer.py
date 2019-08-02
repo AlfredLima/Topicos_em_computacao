@@ -40,7 +40,10 @@ def main():
     parser.add_argument('-c', '--choice', type=int,
                         default=1,
                         help='Choice the instance')
-    
+    parser.add_argument('-s', '--show', type=bool,
+                        default=False,
+                        help='Show bases station')
+
     args = parser.parse_args(sys.argv[1:])
 
     print("**************************************")
@@ -58,7 +61,7 @@ def main():
     
     city = create_city(centers[args.choice-1], D[args.choice-1])
     
-    center_base_stations = GWO(low_boundary, upper_boundary, (K[args.choice-1], 2), args.population, args.iterations, R[args.choice-1], D[args.choice-1], city, centers[args.choice-1])
+    center_base_stations = GWO(low_boundary, upper_boundary, (K[args.choice-1], 2), args.population, args.iterations, R[args.choice-1], D[args.choice-1], city, centers[args.choice-1], args.show)
 
 if __name__ == "__main__":
     main()
