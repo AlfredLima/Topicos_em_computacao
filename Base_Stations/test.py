@@ -1,4 +1,6 @@
 from shapely.geometry import Polygon
+from shapely.geometry.point import Point
+from shapely.ops import cascaded_union
 import pygame
 import sys
 from pygame.locals import *
@@ -16,46 +18,79 @@ def createPoints2Poly(side, center, radius):
     return tuple(points)
 
 
-# inicia o pygame
-pygame.init()
+def create_city_points(centers, d) :
+    Hx = []
+    for center in centers :
+        Hx.append(createPoints2Poly(6, center, d))
 
-# inicia a janela
-windowSurface = pygame.display.set_mode((625, 625), 0, 32)
-# inicia as cores utilizadas
-BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
-RED = (255, 0, 0)
-GREEN = (0, 255, 0)
-BLUE = (0, 0, 255)
-# inicia as fontes
-basicFont = pygame.font.SysFont(None, 48)
-# desenha o fundo branco
-windowSurface.fill(GREEN)
-# desenha um poligono verde na superficie
+    return Hx
 
-city = [(0, 0), (0, 625), (625, 625), (625, 0)]
+def create_city(centers, d) :
+    Hx = []
+    
+    for center in centers :
+        Hx.append(Polygon(createPoints2Poly(6, center, d)))
 
-BSc = [(219, 287), (219, 393), (312, 234), (312, 234),
-       (312, 340), (312, 448), (405, 287), (405, 393)]
+    return cascaded_union(Hx)
 
-Bs = []
-for B in BSc:
-    Bs.append(createPoints2Poly(4, B, 10))
+def create_base_stations_points(centers, radius) :
+    Bx = []
+    for center in centers :
+        point = Point(center[0], center[1])
+        circle = point.buffer(radius)
+        Bx.append(circle)
 
-for B in Bs:
-    pygame.draw.polygon(windowSurface, (127, 127, 127),
-                        B)
+    return Bx
 
-for i in range(len(BSc)):
-    Bs[i] = Polygon(Bs[i])
+def create_base_stations(centers, radius) :
+    Bx = []
 
-print(Bs[0].intersection(Bs[1]).area)
+    for center in centers :
+        point = Point(center[0], center[1])
+        circle = point.buffer(radius)
+        Bx.append(circle)
 
-# desenha a janela na tela
-pygame.display.update()
-# roda o loop do jogo
-while True:
-    for event in pygame.event.get():
-        if event.type == QUIT:
-            pygame.quit()
-            sys.exit()
+    return cascaded_union(Bx)
+
+
+def run_pygame(city, base_stations) :    
+    
+    # inicia o pygame
+    pygame.init()
+    
+    # inicia a janela
+    windowSurface = pygame.display.set_mode((625, 625), 0, 32)
+    # inicia as cores utilizadas
+    BLACK = (0, 0, 0)
+    WHITE = (255, 255, 255)
+    RED = (255, 0, 0)
+    GREEN = (0, 255, 0)
+    BLUE = (0, 0, 255)
+    GRAY = (127, 127, 127)
+    # inicia as fontes
+    basicFont = pygame.font.SysFont(None, 48)
+    # desenha o fundo branco
+    windowSurface.fill(GREEN)
+    # desenha um poligono verde na superficie
+    
+    for H in city :
+        pygame.draw.polygon(windowSurface, GRAY, H)
+
+    for B in base_stations :
+        x,y = B.exterior.coords.xy
+        points_base_stations = []
+        for i in range(len(x)) :
+            points_base_stations.append([x[i], y[i]])
+            
+        pygame.draw.polygon(windowSurface, BLUE, points_base_stations)    
+                
+    # desenha a janela na tela
+    pygame.display.update()
+    # roda o loop do jogo
+        
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_q:
+                    pygame.quit()
+                    return
